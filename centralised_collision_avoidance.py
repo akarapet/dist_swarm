@@ -20,6 +20,7 @@ def position_callback(timestamp, data, logconf):
     z = data['kalman.stateZ']
     print('pos: ({}, {}, {})'.format(x, y, z))
 
+
 def start_position_printing(scf):
     log_conf = LogConfig(name='Position', period_in_ms=250)
     log_conf.add_variable('kalman.stateX', 'float')
@@ -30,7 +31,9 @@ def start_position_printing(scf):
     log_conf.data_received_cb.add_callback(position_callback)
     log_conf.start()
 
+
 # Main Centralised algorithm
+
 def centr_avoid(scf):
     cf = scf.cf
 

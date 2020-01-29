@@ -74,8 +74,8 @@ def centr_avoid(scf):
 
 
 if __name__ == '__main__':
-    #Ros variables
 
+    #ROS variables
     pub = rospy.Publisher('CF1_position', Point, queue_size=10)
     rospy.init_node('centr', anonymous=True)
     msg = Point()

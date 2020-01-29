@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import logging
 import time
 
@@ -7,10 +9,14 @@ from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncLogger import SyncLogger
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
+import rospy
+from geometry_msgs.msg import Point
+
 URI = 'radio://0/100/2M/E7E7E7E701'
 
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
+
 
 
 # Position Logging
@@ -18,7 +24,12 @@ def position_callback(timestamp, data, logconf):
     x = data['kalman.stateX']
     y = data['kalman.stateY']
     z = data['kalman.stateZ']
-    print('pos: ({}, {}, {})'.format(x, y, z))
+    msg.x = x
+    msg.y = y
+    msg.z = z
+    rospy.loginfo(msg)
+    pub.publish(msg)
+    #print('pos: ({}, {}, {})'.format(x, y, z))
 
 
 def start_position_printing(scf):
@@ -63,6 +74,11 @@ def centr_avoid(scf):
 
 
 if __name__ == '__main__':
+    #Ros variables
+
+    pub = rospy.Publisher('CF1_position', Point, queue_size=10)
+    rospy.init_node('centr', anonymous=True)
+    msg = Point()
 
     # Initialize the low-level drivers (don't list the debug drivers)
     cflib.crtp.init_drivers(enable_debug_driver=False)

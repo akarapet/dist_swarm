@@ -3,6 +3,7 @@
 import logging
 import time
 
+import numpy as np
 
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
@@ -50,9 +51,9 @@ def centr_avoid(scf):
     cf = scf.cf
 
     # Set Initial Values
-    cf.param.set_value('kalman.initialX', '1.0')
+    cf.param.set_value('kalman.initialX', '0.5')
     time.sleep(0.1)
-    cf.param.set_value('kalman.initialY', '1.0')
+    cf.param.set_value('kalman.initialY', '0.0')
     time.sleep(1)
 
     # Reset the Kalman Filter (Important!)
@@ -61,18 +62,43 @@ def centr_avoid(scf):
     cf.param.set_value('kalman.resetEstimation', '0')
     time.sleep(2)
 
+    # Read the inputs
+    # MPC application size
+    nsim = 100
+
+
+    ctrl_applied = inputReader(nsim)
+    print(ctrl_applied[99, 0])
+    print(ctrl_applied[99, 1])
+
+
+
     # Send the velocity commands
     # commander.send_hover_setpoint(vx,vy,yaw_rate,z)
-    for y in range(50):
+
+    # start up
+    for y in range(20):
         cf.commander.send_hover_setpoint(0, 0, 0, 0.25)
         time.sleep(0.1)
+    #
+    for y in range(nsim):
+         cf.commander.send_hover_setpoint(ctrl_applied[y, 0], ctrl_applied[y, 1], 0, 0.25)
+         time.sleep(0.1)
 
     for y in range(10):
         cf.commander.send_hover_setpoint(0, 0, 0, 0.1)
         time.sleep(0.1)
-
+    #
     cf.commander.send_stop_setpoint()
 
+def inputReader(nsim):
+    input_matrix = np.zeros((nsim, 2))
+    f = open("/home/antonis/admm_collsion_avoidance/testinputs.txt", "r")
+    for i, line in enumerate(f):
+        a = line.split(",")
+        input_matrix[i, :] = [a[0], a[1]]
+    f.close()
+    return input_matrix
 
 
 if __name__ == '__main__':

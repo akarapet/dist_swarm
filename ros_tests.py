@@ -1,5 +1,5 @@
 # !/usr/bin/env python
-# license removed for brevity
+
 
 import rospy
 from geometry_msgs.msg import Point
@@ -27,3 +27,5 @@ if __name__ == '__main__':
         talker()
     except rospy.ROSInterruptException:
         pass
+
+

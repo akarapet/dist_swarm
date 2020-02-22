@@ -12,6 +12,7 @@ from cflib.crazyflie.syncLogger import SyncLogger
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 import rospy
+import rosbag
 from geometry_msgs.msg import Point
 
 URI = 'radio://0/100/2M/E7E7E7E701'
@@ -31,11 +32,13 @@ def position_callback(timestamp, data, logconf):
     msg.z = z
     rospy.loginfo(msg)
     pub.publish(msg)
+
+    bag.write('CF1_position', msg)
     #print('pos: ({}, {}, {})'.format(x, y, z))
 
 
 def start_position_printing(scf):
-    log_conf = LogConfig(name='Position', period_in_ms=250)
+    log_conf = LogConfig(name='Position', period_in_ms=100)
     log_conf.add_variable('kalman.stateX', 'float')
     log_conf.add_variable('kalman.stateY', 'float')
     log_conf.add_variable('kalman.stateZ', 'float')
@@ -89,6 +92,8 @@ def centr_avoid(scf):
         cf.commander.send_hover_setpoint(0, 0, 0, 0.1)
         time.sleep(0.1)
     #
+
+    bag.close()
     cf.commander.send_stop_setpoint()
 
 def inputReader(nsim):
@@ -107,6 +112,7 @@ if __name__ == '__main__':
     pub = rospy.Publisher('CF1_position', Point, queue_size=10)
     rospy.init_node('centr', anonymous=True)
     msg = Point()
+    bag = rosbag.Bag('RosBags/cf1                                                                                               .bag', 'w')
 
     # Initialize the low-level drivers (don't list the debug drivers)
     cflib.crtp.init_drivers(enable_debug_driver=False)

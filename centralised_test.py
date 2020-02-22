@@ -15,7 +15,7 @@ import rospy
 import rosbag
 from geometry_msgs.msg import Point
 
-URI = 'radio://0/100/2M/E7E7E7E701'
+URI = 'radio://0/100/2M/E7E7E7E702'
 
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     pub = rospy.Publisher('CF1_position', Point, queue_size=10)
     rospy.init_node('centr', anonymous=True)
     msg = Point()
-    bag = rosbag.Bag('RosBags/cf1                                                                                               .bag', 'w')
+    bag = rosbag.Bag('RosBags/cf1.bag', 'w')
 
     # Initialize the low-level drivers (don't list the debug drivers)
     cflib.crtp.init_drivers(enable_debug_driver=False)

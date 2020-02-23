@@ -70,7 +70,7 @@ def centr_avoid(scf):
     nsim = 100
 
 
-    ctrl_applied = inputReader(nsim)
+    ctrl_applied = inputReader(nsim,'testinputs1.txt')
     print(ctrl_applied[99, 0])
     print(ctrl_applied[99, 1])
 
@@ -96,9 +96,9 @@ def centr_avoid(scf):
     bag.close()
     cf.commander.send_stop_setpoint()
 
-def inputReader(nsim):
+def inputReader(nsim,doc):
     input_matrix = np.zeros((nsim, 2))
-    f = open("/home/antonis/admm_collsion_avoidance/testinputs.txt", "r")
+    f = open("/home/antonis/admm_collsion_avoidance/"+doc, "r")
     for i, line in enumerate(f):
         a = line.split(",")
         input_matrix[i, :] = [a[0], a[1]]

@@ -73,7 +73,6 @@ def centr_avoid(scf):
     for y in range(10):
         cf.commander.send_hover_setpoint(0, 0, 0, 0.1)
         time.sleep(0.1)
-
     bag.close()
     cf.commander.send_stop_setpoint()
 

@@ -1,4 +1,5 @@
 import time
+import logging
 
 import numpy as np
 
@@ -8,9 +9,12 @@ from cflib.crazyflie.swarm import CachedCfFactory
 from cflib.crazyflie.swarm import Swarm
 from cflib.crazyflie.syncLogger import SyncLogger
 
+
 import rospy
 import rosbag
 from geometry_msgs.msg import Point
+
+logging.basicConfig(level=logging.ERROR)
 
 URI1 = 'radio://0/100/2M/E7E7E7E701'
 URI2 = 'radio://0/100/2M/E7E7E7E702'
@@ -34,8 +38,17 @@ uris = {
 }
 
 def position_callback(uri,timestamp, data, logconf):
-    msg = Point()
-    pub = rospy.Publisher('CF'+ uri[-2:] + 'position', Point, queue_size=10)
+
+    if uri[-2:] == '01':
+        msg = msg1
+        pub = pub1
+    elif uri[-2:] == '02':
+        msg = msg2
+        pub = pub2
+    else:
+        msg = msg3
+        pub = pub3
+
     x = data['kalman.stateX']
     y = data['kalman.stateY']
     z = data['kalman.stateZ']
@@ -46,14 +59,16 @@ def position_callback(uri,timestamp, data, logconf):
     pub.publish(msg)
 
     #bag.write('CF1_position', msg)
-    #print('pos: ({}, {}, {})'.format(x, y, z))
+
 
 
 def start_position_printing(scf):
+
     log_conf = LogConfig(name='Position', period_in_ms=100)
     log_conf.add_variable('kalman.stateX', 'float')
     log_conf.add_variable('kalman.stateY', 'float')
     log_conf.add_variable('kalman.stateZ', 'float')
+
 
     scf.cf.log.add_config(log_conf)
     log_conf.data_received_cb.add_callback(lambda t, d, l: position_callback(scf.cf.link_uri, t, d, l))
@@ -72,9 +87,19 @@ def reset_estimator(scf, init_pos):
     cf.param.set_value('kalman.resetEstimation', '1')
     time.sleep(0.1)
     cf.param.set_value('kalman.resetEstimation', '0')
-
+    time.sleep(2)
 
 if __name__ == '__main__':
+
+    # ROS VAriables
+    rospy.init_node('centr', anonymous=True)
+    msg1 = Point()
+    msg2 = Point()
+    msg3 = Point()
+    pub1 = rospy.Publisher('CF1_position', Point, queue_size=10)
+    pub2 = rospy.Publisher('CF2_position', Point, queue_size=10)
+    pub3 = rospy.Publisher('CF3_position', Point, queue_size=10)
+
     # logging.basicConfig(level=logging.DEBUG)
     cflib.crtp.init_drivers(enable_debug_driver=False)
 
@@ -82,4 +107,9 @@ if __name__ == '__main__':
     with Swarm(uris, factory=factory) as swarm:
         swarm.parallel(reset_estimator, args_dict=est_args)
         swarm.parallel(start_position_printing)
+        time.sleep(5)
+
+
+
+
 

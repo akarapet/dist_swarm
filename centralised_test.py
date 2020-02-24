@@ -15,7 +15,7 @@ import rospy
 import rosbag
 from geometry_msgs.msg import Point
 
-URI = 'radio://0/100/2M/E7E7E7E702'
+URI = 'radio://0/100/2M/E7E7E7E701'
 
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
@@ -66,23 +66,27 @@ def centr_avoid(scf):
     time.sleep(2)
 
     # Read the inputs
+
     # MPC application size
     nsim = 100
 
-
     ctrl_applied = inputReader(nsim,'testinputs1.txt')
+
     print(ctrl_applied[99, 0])
     print(ctrl_applied[99, 1])
-
-
 
     # Send the velocity commands
     # commander.send_hover_setpoint(vx,vy,yaw_rate,z)
 
     # start up
     for y in range(20):
+        cf.commander.send_hover_setpoint(0, 0, 0, 0.2)
+        time.sleep(0.1)
+
+    for y in range(10):
         cf.commander.send_hover_setpoint(0, 0, 0, 0.25)
         time.sleep(0.1)
+
     #
     for y in range(nsim):
          cf.commander.send_hover_setpoint(ctrl_applied[y, 0], ctrl_applied[y, 1], 0, 0.25)

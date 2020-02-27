@@ -15,7 +15,7 @@ import rospy
 import rosbag
 from geometry_msgs.msg import Point
 
-URI = 'radio://0/80/2M/E7E7E7E701'
+URI = 'radio://0/90/2M/E7E7E7E702'
 
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
@@ -54,9 +54,9 @@ def centr_avoid(scf):
     cf = scf.cf
 
     # Set Initial Values
-    cf.param.set_value('kalman.initialX', '1.0')
+    cf.param.set_value('kalman.initialX', '0.6')
     time.sleep(0.1)
-    cf.param.set_value('kalman.initialY', '0.5')
+    cf.param.set_value('kalman.initialY', '0.0')
     time.sleep(1)
 
     # Reset the Kalman Filter (Important!)
@@ -70,7 +70,7 @@ def centr_avoid(scf):
     # MPC application size
     nsim = 100
 
-    ctrl_applied = inputReader(nsim,'testinputs2.txt')
+    ctrl_applied = inputReader(nsim,'testinputs1.txt')
 
     print(ctrl_applied[99, 0])
     print(ctrl_applied[99, 1])
@@ -84,12 +84,12 @@ def centr_avoid(scf):
         time.sleep(0.1)
 
     for y in range(10):
-        cf.commander.send_hover_setpoint(0, 0, 0, 0.25)
+        cf.commander.send_hover_setpoint(0, 0, 0, 0.2)
         time.sleep(0.1)
 
     #
     for y in range(nsim):
-         cf.commander.send_hover_setpoint(ctrl_applied[y, 0], ctrl_applied[y, 1], 0, 0.25)
+         cf.commander.send_hover_setpoint(ctrl_applied[y, 0], ctrl_applied[y, 1], 0, 0.2)
          time.sleep(0.1)
 
     for y in range(10):
@@ -116,15 +116,11 @@ if __name__ == '__main__':
     pub = rospy.Publisher('CF1_position', Point, queue_size=10)
     rospy.init_node('centr', anonymous=True)
     msg = Point()
-    bag = rosbag.Bag('RosBags/cf2.bag', 'w')
+    bag = rosbag.Bag('RosBags/cf1.bag', 'w')
 
     # Initialize the low-level drivers (don't list the debug drivers)
     cflib.crtp.init_drivers(enable_debug_driver=False)
     with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='./cache')) as scf:
         start_position_printing(scf)
         centr_avoid(scf)
-
-
-
-
 

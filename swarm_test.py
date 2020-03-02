@@ -20,9 +20,9 @@ URI1 = 'radio://0/80/2M/E7E7E7E701'
 URI2 = 'radio://1/90/2M/E7E7E7E702'
 URI3 = 'radio://2/100/2M/E7E7E7E703'
 
-init_pos1 = np.array([0.5, 0.0])
-init_pos2 = np.array([1.0, 0.5])
-init_pos3 = np.array([1.0, 1.5])
+init_pos1 = np.array([0.6, 0.0])
+init_pos2 = np.array([1.2, 0.6])
+init_pos3 = np.array([1.2, 1.5])
 
 
 est_args = {
@@ -127,16 +127,16 @@ def run_sequence(scf, sequence):
 
         # start up
         for y in range(20):
-            cf.commander.send_hover_setpoint(0, 0, 0, 0.2)
+            cf.commander.send_hover_setpoint(0, 0, 0, 0.15)
             time.sleep(0.1)
 
         for y in range(10):
-            cf.commander.send_hover_setpoint(0, 0, 0, 0.25)
+            cf.commander.send_hover_setpoint(0, 0, 0, 0.2)
             time.sleep(0.1)
 
         #
         for y in range(nsim):
-            cf.commander.send_hover_setpoint(sequence[y, 0], sequence[y, 1], 0, 0.25)
+            cf.commander.send_hover_setpoint(sequence[y, 0], sequence[y, 1], 0, 0.2)
             time.sleep(0.1)
 
         for y in range(10):

@@ -91,7 +91,7 @@ def position_callback(uri,timestamp, data, logconf):
 
 def start_position_printing(scf):
 
-    log_conf = LogConfig(name='Position', period_in_ms=100)
+    log_conf = LogConfig(name='Position', period_in_ms=2)
     log_conf.add_variable('kalman.stateX', 'float')
     log_conf.add_variable('kalman.stateY', 'float')
     log_conf.add_variable('kalman.stateZ', 'float')
@@ -130,14 +130,14 @@ def run_sequence(scf, sequence):
             cf.commander.send_hover_setpoint(0, 0, 0, 0.15)
             time.sleep(0.1)
 
-        for y in range(10):
+        for y in range(50): #10
             cf.commander.send_hover_setpoint(0, 0, 0, 0.2)
             time.sleep(0.1)
 
         #
-        for y in range(nsim):
-            cf.commander.send_hover_setpoint(sequence[y, 0], sequence[y, 1], 0, 0.2)
-            time.sleep(0.1)
+        #for y in range(nsim):
+            #cf.commander.send_hover_setpoint(sequence[y, 0], sequence[y, 1], 0, 0.2)
+            #time.sleep(0.1)
 
         for y in range(10):
             cf.commander.send_hover_setpoint(0, 0, 0, 0.1)

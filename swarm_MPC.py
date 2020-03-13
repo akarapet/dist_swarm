@@ -66,15 +66,15 @@ def position_callback(uri,timestamp, data, logconf):
     if uri[-2:] == '01':
         msg = msg1
         pub = pub1
-        bag = bag1
+        #bag = bag1
     elif uri[-2:] == '02':
         msg = msg2
         pub = pub2
-        bag = bag2
+        #bag = bag2
     else:
         msg = msg3
         pub = pub3
-        bag = bag3
+        #bag = bag3
 
     x = data['kalman.stateX']
     y = data['kalman.stateY']
@@ -83,15 +83,15 @@ def position_callback(uri,timestamp, data, logconf):
     msg.y = y
     msg.z = z
 
-    #rospy.loginfo(msg)
-    #pub.publish(msg)
-    bag.write('CF1_position', msg)
+    rospy.loginfo(msg)
+    pub.publish(msg)
+    #bag.write('CF1_position', msg)
 
 
 
 def start_position_printing(scf):
 
-    log_conf = LogConfig(name='Position', period_in_ms=2)
+    log_conf = LogConfig(name='Position', period_in_ms=45)
     log_conf.add_variable('kalman.stateX', 'float')
     log_conf.add_variable('kalman.stateY', 'float')
     log_conf.add_variable('kalman.stateZ', 'float')
@@ -134,10 +134,6 @@ def run_sequence(scf, sequence):
             cf.commander.send_hover_setpoint(0, 0, 0, 0.2)
             time.sleep(0.1)
 
-        #
-        #for y in range(nsim):
-            #cf.commander.send_hover_setpoint(sequence[y, 0], sequence[y, 1], 0, 0.2)
-            #time.sleep(0.1)
 
         for y in range(10):
             cf.commander.send_hover_setpoint(0, 0, 0, 0.1)
@@ -158,9 +154,9 @@ if __name__ == '__main__':
     pub2 = rospy.Publisher('CF2_position', Point, queue_size=10)
     pub3 = rospy.Publisher('CF3_position', Point, queue_size=10)
 
-    bag1 = rosbag.Bag('RosBags/cf1_swarm.bag', 'w')
-    bag2 = rosbag.Bag('RosBags/cf2_swarm.bag', 'w')
-    bag3 = rosbag.Bag('RosBags/cf3_swarm.bag', 'w')
+    #bag1 = rosbag.Bag('RosBags/cf1_swarm.bag', 'w')
+    #bag2 = rosbag.Bag('RosBags/cf2_swarm.bag', 'w')
+    #bag3 = rosbag.Bag('RosBags/cf3_swarm.bag', 'w')
 
     # logging.basicConfig(level=logging.DEBUG)
     cflib.crtp.init_drivers(enable_debug_driver=False)
@@ -172,9 +168,9 @@ if __name__ == '__main__':
         swarm.parallel(reset_estimator, args_dict=est_args)
         swarm.parallel(run_sequence, args_dict=seq_args)
 
-    bag1.close()
-    bag2.close()
-    bag3.close()
+    #bag1.close()
+    #bag2.close()
+    #bag3.close()
 
 
 

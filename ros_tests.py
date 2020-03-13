@@ -12,7 +12,7 @@ def talker():
     msg.x = 1.0
     msg.y = 1.0
     msg.z = 0.0
-    rate = rospy.Rate(10)  # 10hz
+    rate = rospy.Rate(23)  # 10hz
 
     while not rospy.is_shutdown():
         msg.x += 0.0001

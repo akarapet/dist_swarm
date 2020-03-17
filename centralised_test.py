@@ -15,7 +15,7 @@ import rospy
 import rosbag
 from geometry_msgs.msg import Point
 
-URI = 'radio://0/90/2M/E7E7E7E702'
+URI = 'radio://0/100/2M/E7E7E7E703'
 
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
